@@ -1,4 +1,5 @@
 import os
+import json
 from flask import Flask, request
 import telebot
 
@@ -15,12 +16,12 @@ app = Flask(__name__)
 def home():
     return "Servidor del Bot Activo"
 
-# --- RUTA WEBHOOK DE TELEGRAM ---
+# --- RUTA WEBHOOK DE TELEGRAM (Corregida con json.loads) ---
 @app.route(f'/{TOKEN}', methods=['POST'])
 def webhook():
     try:
         json_string = request.get_data().decode('utf-8')
-        update = telebot.types.Update.de_json(json_string)
+        update = telebot.types.Update.de_json(json.loads(json_string))
         bot.process_new_updates([update])
     except Exception as e:
         print(f"Error procesando webhook: {e}")
@@ -84,5 +85,6 @@ def aprobar():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
+
     
 
